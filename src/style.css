@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+:root {
+    --maz-color-primary-h: 220; /* Adjust the hue (e.g., blue) */
+    --maz-color-primary-s: 85%; /* Saturation */
+    --maz-color-primary-l: 55%; /* Lightness */
+  
+    --maz-color-secondary-h: 270;
+    --maz-color-secondary-s: 60%;
+    --maz-color-secondary-l: 50%;
+  
+    --maz-bg-primary: #f5f6fa; /* Light background */
+    --maz-bg: #ffffff; /* Sidebar background */
+    --maz-color-text: #333333; /* Text color */
+    --maz-color-border: #e5e7eb; /* Border color */
+  }
+  
+
+  
