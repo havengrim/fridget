@@ -14,6 +14,7 @@ declare module 'vue' {
     MazCardSpotlight: typeof import('maz-ui/components/MazCardSpotlight')['default']
     MazCircularProgressBar: typeof import('maz-ui/components/MazCircularProgressBar')['default']
     MazDropdown: typeof import('maz-ui/components/MazDropdown')['default']
+    MazIcon: typeof import('maz-ui/components/MazIcon')['default']
     MazInput: typeof import('maz-ui/components/MazInput')['default']
     MazSwitch: typeof import('maz-ui/components/MazSwitch')['default']
     MazTable: typeof import('maz-ui/components/MazTable')['default']

@@ -5,12 +5,12 @@ const isOpen = ref(false);
 </script>
 
 <template>
-  <nav class="relative bg-white shadow dark:bg-gray-800">
+  <nav class="relative bg-white dark:bg-gray-800">
     <div class="container px-6 py-4 mx-auto">
       <div class="lg:flex lg:items-center lg:justify-between">
         <div class="flex items-center justify-between">
           <a href="#">
-            <img class="w-22 h-6 sm:h-8" :src="images.logo" alt="Logo" />
+            <img  class="w-auto max-h-[25px] sm:max-h-[35px]"  :src="images.logo" alt="Logo" />
           </a>
 
           <!-- Mobile Menu Button -->
@@ -37,10 +37,10 @@ const isOpen = ref(false);
           class="absolute inset-x-0 z-20 w-full px-6 py-4 transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 lg:mt-0 lg:p-0 lg:top-0 lg:relative lg:bg-transparent lg:w-auto lg:opacity-100 lg:translate-x-0 lg:flex lg:items-center"
         >
           <div class="flex flex-col -mx-6 lg:flex-row lg:items-center lg:mx-8">
-            <a href="#" class="px-3 py-2 mx-3 mt-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Join Slack</a>
-            <a href="#" class="px-3 py-2 mx-3 mt-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Browse Topics</a>
-            <a href="#" class="px-3 py-2 mx-3 mt-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Random Item</a>
-            <a href="#" class="px-3 py-2 mx-3 mt-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Experts</a>
+            <a href="#" class="px-3 py-2 mx-3 mt-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Home</a>
+            <a href="#" class="px-3 py-2 mx-3 mt-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Category</a>
+            <a href="#" class="px-3 py-2 mx-3 mt-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">ingredients</a>
+            <a href="#" class="px-3 py-2 mx-3 mt-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Help</a>
           </div>
 
           <div class="flex items-center mt-4 lg:mt-0">
