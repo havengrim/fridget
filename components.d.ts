@@ -7,23 +7,17 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Footer: typeof import('./src/components/Footer.vue')['default']
     MazAvatar: typeof import('maz-ui/components/MazAvatar')['default']
-    MazBadge: typeof import('maz-ui/components/MazBadge')['default']
     MazBtn: typeof import('maz-ui/components/MazBtn')['default']
     MazCard: typeof import('maz-ui/components/MazCard')['default']
     MazCardSpotlight: typeof import('maz-ui/components/MazCardSpotlight')['default']
-    MazCircularProgressBar: typeof import('maz-ui/components/MazCircularProgressBar')['default']
-    MazDropdown: typeof import('maz-ui/components/MazDropdown')['default']
-    MazIcon: typeof import('maz-ui/components/MazIcon')['default']
+    MazDialog: typeof import('maz-ui/components/MazDialog')['default']
     MazInput: typeof import('maz-ui/components/MazInput')['default']
-    MazSwitch: typeof import('maz-ui/components/MazSwitch')['default']
-    MazTable: typeof import('maz-ui/components/MazTable')['default']
+    MazInputTags: typeof import('maz-ui/components/MazInputTags')['default']
+    MazSelect: typeof import('maz-ui/components/MazSelect')['default']
     Navbar: typeof import('./src/components/Navbar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Sidebar: typeof import('./src/components/Sidebar.vue')['default']
-  }
-  export interface ComponentCustomProperties {
-    vTooltip: typeof import('maz-ui')['vTooltip']
   }
 }

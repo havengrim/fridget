@@ -1,8 +1,8 @@
 <template>
-  <div class="container mx-auto p-6">
+  <div class="container mx-auto p-0 sm:p-6">
     <!-- Title & Search -->
-    <div class="flex flex-col items-center text-center">
-      <h1 class="font-semibold text-2xl sm:text-4xl mt-2">What are you cooking today?</h1>
+    <div class="flex flex-col items-center justify-between text-center">
+      <h1 class="font-bold text-2xl sm:text-4xl mt-14">What are you cooking today?</h1>
 
       <!-- Search Input -->
       <div class="w-full max-w-xl mt-6">
@@ -23,10 +23,13 @@
     <!-- Recipe Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
       <MazCard 
-        v-for="recipe in recipes" 
-        :key="recipe.id" 
-        class="overflow-hidden shadow-none !p-0 !shadow-none"
-      >
+          v-for="(recipe, index) in recipes" 
+          :key="recipe.id" 
+          class="overflow-hidden !p-0 !shadow-none hover:scale-105 hover:cursor-pointer transition-transform duration-300"
+
+          data-aos="fade-up"
+          :data-aos-delay="index * 200" 
+        >
         <img 
           :src="recipe.image" 
           :alt="recipe.title" 
@@ -43,9 +46,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import { MagnifyingGlassIcon } from "@heroicons/vue/24/solid";
-import images from "@/assets/images.ts"
+import images from "@/assets/images.ts";
+
 const searchQuery = ref("");
 
 const recipes = ref([
@@ -54,4 +60,12 @@ const recipes = ref([
   { id: 3, title: "Grilled Salmon", description: "Juicy salmon grilled to perfection.", image: images.salmon },
   { id: 4, title: "Chocolate Cake", description: "Rich and moist chocolate cake for dessert.", image: images.chocolate },
 ]);
+
+onMounted(() => {
+  AOS.init({
+    easing: "ease-out-cubic", 
+    once: false, 
+  });
+});
+
 </script>

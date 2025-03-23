@@ -28,7 +28,9 @@
               </div>
 
               <div class="mt-6">
-                <Maz-btn color="primary" class="w-full" @click="handleSubmit" block>Sign in</Maz-btn>
+                <a href="/dashboard">
+                  <Maz-btn color="primary" class="w-full" @click="handleSubmit" block>Sign in</Maz-btn>
+                </a>
               </div>
             </form>
           </div>
