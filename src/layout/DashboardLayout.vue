@@ -14,7 +14,7 @@ provide('toggleSidebar', toggleSidebar);
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col">
+  <div class="flex min-h-screen">
     <div class="flex-1 flex flex-col transition-all duration-300">
       <Navbar />
       <div class="flex-1 p-6">
