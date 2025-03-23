@@ -5,10 +5,12 @@ import Dashboard from '../views/Dashboard.vue';
 import Ingredients from '@/views/Ingredients.vue';
 import Categories from '@/views/Categories.vue';
 import Help from '@/views/Help.vue';
+import SignUp from '@/views/SignUp.vue';
 // import Settings from '../views/Settings.vue';
 
 const routes = [
   { path: '/', component: Login, name: 'Login' },
+  { path: '/signup', component: SignUp, name: 'SignUp' },
   {
     path: '/dashboard',
     component: DashboardLayout,

@@ -26,12 +26,19 @@
                 </div>
                 <MazInput v-model="password" type="password" placeholder="Your Password" class="w-full" block />
               </div>
+              
 
               <div class="mt-6">
                 <a href="/dashboard">
                   <Maz-btn color="primary" class="w-full" @click="handleSubmit" block>Sign in</Maz-btn>
                 </a>
               </div>
+              <div class="mt-4 text-center">
+                <p class="text-sm text-gray-600 dark:text-gray-200">
+                  Don't have an account? <a href="/signup" class="text-blue-500">Sign up</a>
+                </p>
+              </div>
+
             </form>
           </div>
         </div>
