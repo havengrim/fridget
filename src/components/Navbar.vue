@@ -2,6 +2,19 @@
 import { ref } from "vue";
 import images from "@/assets/images.ts"
 const isOpen = ref(false);
+import { UserIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon } from "@heroicons/vue/24/outline";
+
+const icons = {
+  user: UserIcon,
+  cog: Cog6ToothIcon,
+  logout: ArrowRightOnRectangleIcon,
+};
+
+const dropdownItems = [
+  { label: "Profile", icon: "user", href: "/profile" },
+  { label: "Settings", icon: "cog", href: "/settings" },
+  { label: "Logout", icon: "logout", action: () => alert("Logged Out") },
+];
 </script>
 
 <template>
@@ -41,17 +54,53 @@ const isOpen = ref(false);
             <a href="/dashboard/categories" class="px-3 py-2 mx-3 mt-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Category</a>
             <a href="/dashboard/ingredients" class="px-3 py-2 mx-3 mt-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Ingredients</a>
             <a href="/dashboard/help" class="px-3 py-2 mx-3 mt-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Help</a>
-          </div>
-
-          <div class="flex items-center mt-4 lg:mt-0">
-            <MazAvatar src="https://api.dicebear.com/7.x/big-smile/svg?backgroundColor=1d90ff&scale=80"
-              fallback-src="https://api.dicebear.com/7.x/big-smile/svg?backgroundColor=1d90ff&scale=80&seed=100"
-              loading="eager"
-              size="12px" />
             
           </div>
+
+          <div class=" mt-4 lg:mt-0">
+            <MazDropdown :items="dropdownItems">
+              <template #element>
+                <MazAvatar
+                  clickable
+                  no-clickable-icon
+                  class="border-2 border-gray-300 dark:border-gray-600 hover:scale-105 transition-transform"
+                  src="https://cdn.artphotolimited.com/images/5ff5a529bd40b83c5a537440/1000x1000/gerard-depardieu-1983.jpg"
+                  size="12px"
+                />
+              </template>
+
+              <template #item="{ item }">
+                  <a
+                    v-if="item.href"
+                    :href="item.href"
+                    class="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+                  >
+                    <component
+                      :is="item.icon"
+                      class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                    />
+                    <span>{{ item.label }}</span>
+                  </a>
+
+                  <button
+                    v-else
+                    @click="item.action"
+                    class="flex items-center gap-2 px-4 py-2 w-full text-left text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+                  >
+                    <component
+                      :is="item.icon"
+                      class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                    />
+                    <span>{{ item.label }}</span>
+                  </button>
+                </template>
+
+
+            </MazDropdown>
+            </div>
         </div>
       </div>
     </div>
   </nav>
 </template>
+
