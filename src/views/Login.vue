@@ -48,39 +48,22 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import images from '../assets/images'; // Ensure the path is correct
+import { ref } from "vue";
+import { useApiStore } from "@/stores/apiStore"; // Import the store
+import images from "../assets/images";
 
-const email = ref('');
-const password = ref('');
-const errorMessage = ref('');
+const store = useApiStore();
+const email = ref("");
+const password = ref("");
+const errorMessage = ref("");
 
 const handleSubmit = async () => {
-  errorMessage.value = '';
-
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/auth/login/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: email.value, // Change this to "email" if Django uses email authentication
-        password: password.value,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      localStorage.setItem('token', data.token);
-      window.location.href = '/dashboard'; // Redirect to dashboard after login
-    } else {
-      errorMessage.value = data.error || 'Invalid credentials';
-    }
-  } catch (error) {
-    console.error('Login error:', error);
-    errorMessage.value = 'Something went wrong. Please try again.';
+  const result = await store.login(email.value, password.value);
+  if (!result.success) {
+    errorMessage.value = result.message;
+  } else {
+    window.location.href = "/dashboard";
   }
 };
 </script>
+
