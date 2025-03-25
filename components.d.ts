@@ -20,6 +20,7 @@ declare module 'vue' {
     MazRadioButtons: typeof import('maz-ui/components/MazRadioButtons')['default']
     MazSelect: typeof import('maz-ui/components/MazSelect')['default']
     MazSlider: typeof import('maz-ui/components/MazSlider')['default']
+    MazToaster: typeof import('maz-ui/components/MazToaster')['default']
     Navbar: typeof import('./src/components/Navbar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
