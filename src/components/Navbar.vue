@@ -1,8 +1,13 @@
 <script setup>
 import { ref } from "vue";
-import images from "@/assets/images.ts"
-const isOpen = ref(false);
+import images from "@/assets/images.ts";
 import { UserIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon } from "@heroicons/vue/24/outline";
+import { useApiStore } from "@/stores/apiStore";
+import { useToast } from "maz-ui"; // Import useToast
+
+const store = useApiStore();
+const isOpen = ref(false);
+const toast = useToast(); // Initialize MazToaster
 
 const icons = {
   user: UserIcon,
@@ -10,10 +15,25 @@ const icons = {
   logout: ArrowRightOnRectangleIcon,
 };
 
+const handleLogout = async () => {
+  try {
+    await store.logout(); // Calls API to logout
+    toast.info("You have logged out successfully!", { color: "blue", timeout: 1000 });
+
+    // Redirect to home after a slight delay for better UX
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 2000);
+  } catch (error) {
+    toast.error("Logout failed. Try again!", { timeout: 2000 });
+  }
+};
+
+
 const dropdownItems = [
   { label: "Profile", icon: "user", href: "/profile" },
   { label: "Settings", icon: "cog", href: "/settings" },
-  { label: "Logout", icon: "logout", action: () => alert("Logged Out") },
+  { label: "Logout", icon: "logout", action: handleLogout },
 ];
 </script>
 

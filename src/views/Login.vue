@@ -50,20 +50,39 @@
 <script setup>
 import { ref } from "vue";
 import { useApiStore } from "@/stores/apiStore"; // Import the store
+import { useToast } from "maz-ui"; // Import useToast
 import images from "../assets/images";
 
 const store = useApiStore();
+const toast = useToast(); // Initialize toast notifications
+
 const email = ref("");
 const password = ref("");
 const errorMessage = ref("");
 
 const handleSubmit = async () => {
   const result = await store.login(email.value, password.value);
+  
   if (!result.success) {
     errorMessage.value = result.message;
+
+    // Show error toast
+    toast.error(result.message, {
+      timeout: 3000,
+    });
   } else {
-    window.location.href = "/dashboard";
+    // Show success toast
+    toast.info("Login successful! Redirecting...", {
+      timeout: 1000,
+      color: "blue"
+    });
+
+    // Redirect after a short delay
+    setTimeout(() => {
+      window.location.href = "/dashboard";
+    }, 2000);
   }
 };
 </script>
+
 

@@ -5,13 +5,7 @@
 
       <!-- Input Section -->
       <div class="flex flex-col sm:flex-row gap-2 w-full">
-        <MazInputTags 
-          v-model="newIngredient"
-          label="Enter Ingredient"
-          color="primary"
-          size="sm"
-          class="flex-1 w-full cursor-text"
-        />
+        <MazInputTags v-model="newIngredient" label="Enter Ingredient" class="w-full" />
 
         <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <!-- Category Select -->
@@ -35,7 +29,7 @@
         <MazCard 
           v-for="(items, category) in categorizedIngredients" 
           :key="category"
-          class="p-4 !border !border-gray-300 rounded-lg !shadow-none"
+          class="p-4 border border-gray-300 rounded-lg shadow-md"
         >
           <h2 class="font-semibold text-lg border-b pb-2 mb-2">{{ category }}</h2>
           <ul class="space-y-2">
@@ -74,14 +68,17 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { useApiStore } from "@/stores/apiStore"
 import { TrashIcon } from "@heroicons/vue/24/outline";
-import { useToast } from "maz-ui"; // ✅ Correct import
+import { useToast } from "maz-ui";
 
-const toast = useToast(); 
+const store = useApiStore();
+const toast = useToast();
 
 const newIngredient = ref([]);
 const selectedCategory = ref(null);
+const showDialog = ref(false);
 const categories = ref([
   { label: "Vegetables", value: "Vegetables" },
   { label: "Fruits", value: "Fruits" },
@@ -89,53 +86,31 @@ const categories = ref([
   { label: "Meat", value: "Meat" }
 ]);
 
-// Default ingredients
-const ingredients = ref({
-  Vegetables: ["Carrot"],
-  Fruits: ["Apple", "Banana"],
-  Dairy: ["Milk", "Cheese"],
-  Meat: ["Chicken"]
+onMounted(() => {
+  store.fetchIngredients();
 });
 
-const showDialog = ref(false);
-const deleteCategory = ref(null);
-const deleteIndex = ref(null);
+const categorizedIngredients = computed(() => store.ingredients);
 
-// Computed property to group ingredients by category
-const categorizedIngredients = computed(() => ingredients.value);
-
-// Add ingredient to category
-const addIngredient = () => {
+const addIngredient = async () => {
   if (!newIngredient.value.length || !selectedCategory.value) {
     toast.error("Please enter an ingredient and select a category.");
     return;
   }
 
-  if (!ingredients.value[selectedCategory.value]) {
-    ingredients.value[selectedCategory.value] = [];
-  }
-  
-  ingredients.value[selectedCategory.value].push(...newIngredient.value);
+  await store.addIngredient(newIngredient.value, selectedCategory.value);
   toast.success(`Added ${newIngredient.value.join(", ")} to ${selectedCategory.value}!`);
-
-  newIngredient.value = [];
+  newIngredient.value = []; // Clear input
   selectedCategory.value = null;
 };
 
-// Show delete confirmation dialog
-const confirmDelete = (category, index) => {
-  deleteCategory.value = category;
-  deleteIndex.value = index;
+const confirmDelete = async (id) => {
   showDialog.value = true;
 };
 
-// Delete ingredient
-const deleteIngredient = () => {
-  if (deleteCategory.value !== null && deleteIndex.value !== null) {
-    const deletedItem = ingredients.value[deleteCategory.value][deleteIndex.value];
-    ingredients.value[deleteCategory.value].splice(deleteIndex.value, 1);
-    toast.error(`Deleted ${deletedItem} from ${deleteCategory.value}.`);
-  }
+const deleteIngredient = async () => {
+  await store.deleteIngredient(); // Assuming delete logic in store
+  toast.error("Ingredient deleted!");
   showDialog.value = false;
 };
 </script>

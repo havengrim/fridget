@@ -85,7 +85,7 @@
               </div>
 
               <div class="mt-6">
-                <Maz-btn color="primary" class="w-full" type="submit" block>Sign Up</Maz-btn>
+                <MazBtn color="primary" class="w-full" type="submit" block>Sign Up</MazBtn>
               </div>
 
               <div class="mt-4 text-center">
@@ -103,24 +103,37 @@
 
   
 <script setup>
-import { ref, computed } from 'vue';
-import images from '../assets/images';
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useApiStore } from "../stores/apiStore";
+import { useToast } from "maz-ui"; // Import MazToast
+import images from "../assets/images";
 
-const firstName = ref('');
-const userId = ref('');
-const password = ref('');
-const confirmPassword = ref('');
-const newAllergy = ref('');
+const apiStore = useApiStore();
+const router = useRouter();
+
+const firstName = ref("");
+const userId = ref("");
+const password = ref("");
+const confirmPassword = ref("");
+const newAllergy = ref("");
 const allergies = ref([]);
 const spiciness = ref(1);
 const agreeTerms = ref(false);
+const meatConsumption = ref("");
+const fishConsumption = ref("");
+const vegetableConsumption = ref("");
+const loading = ref(false);
 
-const passwordMismatch = computed(() => password.value !== confirmPassword.value && confirmPassword.value !== '');
+const toast = useToast();
+const passwordMismatch = computed(
+  () => password.value !== confirmPassword.value && confirmPassword.value !== ""
+);
 
 const addAllergy = () => {
   if (newAllergy.value.trim()) {
     allergies.value.push(newAllergy.value.trim());
-    newAllergy.value = '';
+    newAllergy.value = "";
   }
 };
 
@@ -128,36 +141,51 @@ const removeAllergy = (index) => {
   allergies.value.splice(index, 1);
 };
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (!agreeTerms.value) {
-    alert('You must agree to the terms and conditions.');
+    toast.error("You must agree to the terms and conditions.");
     return;
   }
   if (passwordMismatch.value) {
-    alert('Passwords do not match!');
+    toast.error("Passwords do not match!");
     return;
   }
-  console.log({
-    firstName: firstName.value,
-    userId: userId.value,
+
+  const formData = {
+    first_name: firstName.value,
+    username: userId.value,
     password: password.value,
     allergies: allergies.value,
     spiciness: spiciness.value,
-    agreeTerms: agreeTerms.value
-  });
+    meat_consumption: meatConsumption.value,
+    fish_consumption: fishConsumption.value,
+    vegetable_consumption: vegetableConsumption.value,
+  };
+
+  try {
+    loading.value = true;
+    const response = await apiStore.registerUser(formData);
+
+    if (response.success) {
+      toast.info("Registration successful! Redirecting...");
+      setTimeout(() => {
+        router.push("/"); // Redirect after success
+      }, 2000);
+    } else {
+      toast.error(response.message);
+    }
+  } catch (error) {
+    toast.error("Failed to register. Please try again.");
+  } finally {
+    loading.value = false;
+  }
 };
 
-const selectedFrequency = ref('never');
-
-const meatConsumption = ref('');
-const fishConsumption = ref('');
-const vegetableConsumption = ref('');
-
 const consumptionOptions = [
-  { label: 'Never', value: 'never' },
-  { label: 'Rarely', value: 'rarely' },
-  { label: 'Occasionally', value: 'occasionally' },
-  { label: 'Frequently', value: 'frequently' },
-  { label: 'Daily', value: 'daily' }
+  { label: "Never", value: "never" },
+  { label: "Rarely", value: "rarely" },
+  { label: "Occasionally", value: "occasionally" },
+  { label: "Frequently", value: "frequently" },
+  { label: "Daily", value: "daily" },
 ];
 </script>
