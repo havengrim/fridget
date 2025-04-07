@@ -10,7 +10,15 @@ from .models import Ingredient
 from .serializers import IngredientSerializer
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import viewsets, permissions
-
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from transformers import pipeline
+from dotenv import load_dotenv
+import os
+import logging
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
@@ -77,3 +85,64 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+class DeleteIngredientByCategoryIndex(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        category = request.data.get("category")
+        index = request.data.get("index")
+
+        if category is None or index is None:
+            return Response({"error": "Category and index are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Filter ingredients by category and user
+        ingredients = Ingredient.objects.filter(user=request.user, category=category).order_by("id")
+
+        # Get ingredient by index
+        try:
+            ingredient_to_delete = ingredients[index]
+        except IndexError:
+            return Response({"error": "Ingredient not found at the given index."}, status=status.HTTP_404_NOT_FOUND)
+
+        ingredient_to_delete.delete()
+        return Response({"message": "Ingredient deleted successfully"}, status=status.HTTP_200_OK)
+    
+
+
+
+
+logger = logging.getLogger(__name__)
+
+
+class AIRecipeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        logger.debug(f"Authorization Header: {request.headers.get('Authorization')}")
+
+        # Get the user's ingredients
+        user_ingredients = request.user.ingredients.values_list('name', flat=True)
+        prompt = f"Suggest 4 dishes based on these ingredients: {', '.join(user_ingredients)}."
+
+        try:
+            # Use GPT2 model and tokenizer directly
+            tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+            model = GPT2LMHeadModel.from_pretrained("gpt2")
+
+            # Tokenize the input (ingredients prompt)
+            inputs = tokenizer(prompt, return_tensors="pt")
+
+            # Generate the recipe suggestions
+            outputs = model.generate(inputs["input_ids"], max_length=100)
+
+            # Decode the output
+            result = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+            return Response({"recipes": result}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error(f"Error while fetching recipe suggestions: {str(e)}")
+            logger.exception(e)  # To log more details about the exception
+            return Response({"error": "An error occurred while fetching recipe suggestions."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
