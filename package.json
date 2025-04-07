@@ -11,6 +11,8 @@
   "dependencies": {
     "@heroicons/vue": "^2.2.0",
     "@tailwindcss/vite": "^4.0.12",
+    "@tanstack/react-query": "^5.71.10",
+    "@tanstack/vue-query": "^5.71.10",
     "aos": "^2.3.4",
     "maz-ui": "^3.50.1",
     "pinia": "^3.0.1",

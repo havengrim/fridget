@@ -1,166 +1,175 @@
-import { defineStore } from "pinia";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 
-interface ApiState {
-  user: string | null;
-  token: string | null;
-  apiUrl: string;
-  ingredients: Record<string, string[]>; // Stores user ingredients by category
+const API_URL = 'http://127.0.0.1:8000/api/auth'
+const getToken = () => localStorage.getItem('token')
+
+// 🧪 Login
+export const useLogin = () => {
+  return useMutation({
+    mutationFn: async ({ email, password }: { email: string, password: string }) => {
+      const res = await fetch(`${API_URL}/login/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: email, password }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Login failed')
+
+      localStorage.setItem('token', data.token)
+      return data
+    },
+  })
 }
 
-export const useApiStore = defineStore("api", {
-  state: (): ApiState => ({
-    user: null,
-    token: localStorage.getItem("token") || null,
-    apiUrl: "http://127.0.0.1:8000/api/auth",
-    ingredients: {} as Record<string, string[]>,
-  }),
-  
-  actions: {
-    async login(email: string, password: string) {
-      try {
-        const response = await fetch(`${this.apiUrl}/login/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: email, password }),
-        });
+// 🧪 Register
+export const useRegister = () => {
+  return useMutation({
+    mutationFn: async (userData: any) => {
+      const res = await fetch(`${API_URL}/register/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      })
 
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Login failed");
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Registration failed')
 
-        this.token = data.token;
-        this.user = email;
-        localStorage.setItem("token", data.token);
-
-        return { success: true };
-      } catch (error) {
-        return { success: false, message: (error as Error).message };
-      }
+      return data
     },
+  })
+}
 
-    async registerUser(userData: any) {
-      try {
-        const response = await fetch(`${this.apiUrl}/register/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(userData),
-        });
+// 🧪 Fetch Ingredients
+export const useIngredients = () => {
+  return useQuery({
+    queryKey: ['ingredients'],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/ingredients/`, {
+        headers: {
+          Authorization: `Token ${getToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
 
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Registration failed");
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to fetch ingredients')
 
-        return { success: true, message: "Registration successful!" };
-      } catch (error) {
-        return { success: false, message: (error as Error).message };
-      }
+      return data.reduce((acc: Record<string, string[]>, item: any) => {
+        acc[item.category] = acc[item.category] || []
+        acc[item.category].push(item.name)
+        return acc
+      }, {})
     },
+    enabled: !!getToken(),
+  })
+}
 
-    logout() {
-      this.user = null;
-      this.token = null;
-      localStorage.removeItem("token");
+// 🧪 Add Ingredient
+export const useAddIngredient = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ name, category }: { name: string[], category: string }) => {  // Change name type to string[] (array of strings)
+      const res = await fetch(`${API_URL}/ingredients/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Token ${getToken()}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, category }),  // Send name as an array
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to add ingredient')
+
+      return data
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ingredients'] })
+    },
+  })
+}
 
-    // 🆕 Fetch User Ingredients
-    async fetchIngredients() {
-      if (!this.token) {
-        console.error("Fetch Ingredients Error: No token found.");
-        return;
+export const useDeleteIngredient = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ category, index }: { category: string; index: number }) => {
+      const res = await fetch(`${API_URL}/ingredients/delete_by_index/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Token ${getToken()}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ category, index }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to delete ingredient')
+
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ingredients'] })
+    },
+  })
+}
+
+export const useLogout = () => {
+  return useMutation({
+    mutationFn: async () => {
+      // Simply clear the token from localStorage for now
+      localStorage.removeItem('token')
+    },
+  })
+}
+
+export const useAIRecipes = () => {
+  return useQuery({
+    queryKey: ['ai-recipes'],
+    queryFn: async () => {
+      const token = getToken();  // Retrieve token from localStorage
+
+      // Debugging: Log the token to ensure it exists
+      console.log("Token being sent:", token);
+
+      // If token is missing, throw an error
+      if (!token) {
+        throw new Error('Authentication token is missing');
       }
-    
+
       try {
-        console.log("Fetching Ingredients with token:", this.token);
-    
-        const response = await fetch(`${this.apiUrl}/ingredients/`, {
+        // Make API request with Authorization header
+        const res = await fetch(`${API_URL}/recipes/ai/`, {
           headers: {
-            "Authorization": `Token ${this.token}`, // FIXED!
-            "Content-Type": "application/json",
+            Authorization: `Token ${token}`, // or `Bearer ${token}` if required by the API
           },
         });
-    
-        if (response.status === 401) {
-          throw new Error("Unauthorized: Invalid or expired token.");
+
+        // Debugging: Log the raw response text to understand what's being returned
+        const rawData = await res.text();  // Capture raw response as string
+        console.log('Raw Response:', rawData);
+
+        // Try to parse the response as JSON
+        let data;
+        try {
+          data = JSON.parse(rawData);  // Try parsing as JSON
+        } catch (error) {
+          throw new Error('Failed to parse JSON response');
         }
-    
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Failed to fetch ingredients.");
-    
-        this.ingredients = data.reduce((acc: Record<string, string[]>, item: any) => {
-          acc[item.category] = acc[item.category] || [];
-          acc[item.category].push(item.name);
-          return acc;
-        }, {});
+
+        // Check if response is successful
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to fetch recipes");
+        }
+
+        // Return the recipes if everything is fine
+        return data.recipes;
       } catch (error) {
-        console.error("Fetch Ingredients Error:", (error as Error).message);
+        console.error('Error fetching recipes:', error);  // Log the error for debugging
+        throw new Error(error.message || 'Unknown error occurred');
       }
     },
-
-    async addIngredient(ingredient: string, category: string) {
-      if (!this.token) {
-        console.error("Add Ingredient Error: No token found.");
-        return { success: false, message: "Authentication required." };
-      }
-    
-      const requestBody = {
-        name: ingredient, // 🛠️ Ensure this is a string
-        category: category, 
-      };
-    
-      console.log("Request Body:", JSON.stringify(requestBody));
-      console.log("Token:", this.token);
-    
-      try {
-        const response = await fetch(`${this.apiUrl}/ingredients/`, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${this.token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name: Array.isArray(ingredient) ? ingredient : [ingredient], category }), // ✅ Ensure an array
-        });
-        const responseData = await response.json();
-    
-        if (!response.ok) {
-          console.error("API Error Response:", responseData);
-          throw new Error(JSON.stringify(responseData));
-        }
-    
-        console.log("Success:", responseData);
-        return { success: true };
-      } catch (error) {
-        console.error("Add Ingredient Error:", error);
-        return { success: false, message: error.message };
-      }
-    },      
-
-    async deleteIngredient(category: string, index: number) {
-      if (!this.token) {
-        console.error("Delete Ingredient Error: No token found.");
-        return;
-      }
-    
-      try {
-        console.log("Deleting Ingredient with token:", this.token);
-    
-        const response = await fetch(`${this.apiUrl}/ingredients/delete/`, {
-          method: "DELETE",
-          headers: {
-            "Authorization": `Token ${this.token}`, // FIXED!
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ category, index }),
-        });
-    
-        if (response.status === 401) {
-          throw new Error("Unauthorized: Invalid or expired token.");
-        }
-    
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Failed to delete ingredient.");
-    
-        this.ingredients[category].splice(index, 1);
-      } catch (error) {
-        console.error("Delete Ingredient Error:", (error as Error).message);
-      }
-    },    
-  },
-});
+  });
+};

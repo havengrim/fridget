@@ -48,41 +48,40 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useApiStore } from "@/stores/apiStore"; // Import the store
-import { useToast } from "maz-ui"; // Import useToast
-import images from "../assets/images";
+import { ref, watch } from "vue"
+import { useToast } from "maz-ui"
+import { useLogin } from "@/stores/apiStore" 
+import images from "../assets/images"
 
-const store = useApiStore();
-const toast = useToast(); // Initialize toast notifications
+const email = ref("")
+const password = ref("")
+const errorMessage = ref("")
 
-const email = ref("");
-const password = ref("");
-const errorMessage = ref("");
+const toast = useToast()
+const login = useLogin()
 
-const handleSubmit = async () => {
-  const result = await store.login(email.value, password.value);
-  
-  if (!result.success) {
-    errorMessage.value = result.message;
+const handleSubmit = () => {
+  errorMessage.value = "" // clear previous error
 
-    // Show error toast
-    toast.error(result.message, {
-      timeout: 3000,
-    });
-  } else {
-    // Show success toast
-    toast.info("Login successful! Redirecting...", {
-      timeout: 1000,
-      color: "blue"
-    });
+  login.mutate(
+    { email: email.value, password: password.value },
+    {
+      onSuccess: (data) => {
+        toast.info("Login successful! Redirecting...", {
+          timeout: 1000,
+          color: "blue"
+        })
 
-    // Redirect after a short delay
-    setTimeout(() => {
-      window.location.href = "/dashboard";
-    }, 2000);
-  }
-};
+        setTimeout(() => {
+          window.location.href = "/dashboard"
+        }, 2000)
+      },
+      onError: (error) => {
+        const message = error.message || "Login failed"
+        errorMessage.value = message
+        toast.error(message, { timeout: 3000 })
+      }
+    }
+  )
+}
 </script>
-
-

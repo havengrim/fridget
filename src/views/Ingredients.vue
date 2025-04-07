@@ -68,49 +68,81 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useApiStore } from "@/stores/apiStore"
-import { TrashIcon } from "@heroicons/vue/24/outline";
-import { useToast } from "maz-ui";
+import { ref, computed } from "vue"
+import { useToast } from "maz-ui"
+import { TrashIcon } from "@heroicons/vue/24/outline"
+import { useQueryClient } from "@tanstack/vue-query"
+import { useIngredients, useAddIngredient, useDeleteIngredient } from "@/stores/apiStore" 
 
-const store = useApiStore();
-const toast = useToast();
+const toast = useToast()
+const queryClient = useQueryClient()
 
-const newIngredient = ref([]);
-const selectedCategory = ref(null);
-const showDialog = ref(false);
+const newIngredient = ref([])  // Array to store the new ingredients
+const selectedCategory = ref(null)
+const showDialog = ref(false)
+const categoryToDelete = ref("")
+const indexToDelete = ref(null)
+
 const categories = ref([
   { label: "Vegetables", value: "Vegetables" },
   { label: "Fruits", value: "Fruits" },
   { label: "Dairy", value: "Dairy" },
-  { label: "Meat", value: "Meat" }
-]);
+  { label: "Meat", value: "Meat" },
+])
 
-onMounted(() => {
-  store.fetchIngredients();
-});
+// TanStack queries & mutations
+const { data: ingredients, isLoading } = useIngredients()
+const addIngredientMutation = useAddIngredient()
+const deleteIngredientMutation = useDeleteIngredient()
 
-const categorizedIngredients = computed(() => store.ingredients);
+const categorizedIngredients = computed(() => ingredients.value || {})
 
 const addIngredient = async () => {
-  if (!newIngredient.value.length || !selectedCategory.value) {
-    toast.error("Please enter an ingredient and select a category.");
+  const ingredientsList = [...newIngredient.value]; // Ensure it's a plain array
+
+  if (!ingredientsList.length || !selectedCategory.value) {
+    toast.error("Please enter ingredient(s) and select a category.");
     return;
   }
 
-  await store.addIngredient(newIngredient.value, selectedCategory.value);
-  toast.success(`Added ${newIngredient.value.join(", ")} to ${selectedCategory.value}!`);
-  newIngredient.value = []; // Clear input
-  selectedCategory.value = null;
+  try {
+    // Loop through and send each one individually
+    for (const name of ingredientsList) {
+      await addIngredientMutation.mutateAsync({
+        name,
+        category: selectedCategory.value,
+      });
+    }
+
+    toast.success(`Added ${ingredientsList.join(", ")} to ${selectedCategory.value}!`);
+    newIngredient.value = [];
+    selectedCategory.value = null;
+    queryClient.invalidateQueries({ queryKey: ["ingredients"] });
+  } catch (err) {
+    toast.error(err.message || "Error adding ingredients");
+  }
 };
 
-const confirmDelete = async (id) => {
-  showDialog.value = true;
-};
+
+
+const confirmDelete = (category, index) => {
+  categoryToDelete.value = category
+  indexToDelete.value = index
+  showDialog.value = true
+}
 
 const deleteIngredient = async () => {
-  await store.deleteIngredient(); // Assuming delete logic in store
-  toast.error("Ingredient deleted!");
-  showDialog.value = false;
-};
+  try {
+    await deleteIngredientMutation.mutateAsync({
+      category: categoryToDelete.value,
+      index: indexToDelete.value,
+    })
+    toast.success("Ingredient deleted!")  // Use success toast instead of error for deletion
+    queryClient.invalidateQueries({ queryKey: ["ingredients"] })
+  } catch (err) {
+    toast.error("Failed to delete ingredient")
+  } finally {
+    showDialog.value = false  // Close the dialog after operation
+  }
+}
 </script>
