@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white dark:bg-gray-900 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-sm sm:max-w-2xl lg:w-full">
       <MazCardSpotlight>
         <div class="p-4 sm:p-6">
@@ -7,7 +7,7 @@
             <div class="flex flex-col items-center">
               <img class="w-24 sm:w-24 h-auto" :src="images.logo" alt="Fridget Logo" />
             </div>
-            <p class="mt-3 text-gray-500 dark:text-gray-300 text-sm sm:text-base text-center">
+            <p class="mt-3 text-gray-500 text-sm sm:text-base text-center">
               Sign up now and start discovering recipes based on your ingredients.
             </p>
           </div>
@@ -18,11 +18,11 @@
               <!-- Row 1: First Name & User ID -->
               <div class="flex flex-col sm:flex-row gap-4">
                 <div class="w-full sm:w-1/2">
-                  <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200">First Name *</label>
+                  <label class="block mb-2 text-sm text-gray-600">First Name *</label>
                   <MazInput v-model="firstName" type="text" placeholder="John" class="w-full" block required />
                 </div>
                 <div class="w-full sm:w-1/2">
-                  <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200">User ID *</label>
+                  <label class="block mb-2 text-sm text-gray-600">User ID *</label>
                   <MazInput v-model="userId" type="text" placeholder="john_doe" class="w-full" block required />
                 </div>
               </div>
@@ -30,11 +30,11 @@
               <!-- Row 2: Password & Confirm Password -->
               <div class="flex flex-col sm:flex-row gap-4 mt-4">
                 <div class="w-full sm:w-1/2">
-                  <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200">Password *</label>
+                  <label class="block mb-2 text-sm text-gray-600">Password *</label>
                   <MazInput v-model="password" type="password" placeholder="Your Password" class="w-full" block required />
                 </div>
                 <div class="w-full sm:w-1/2">
-                  <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200">Confirm Password *</label>
+                  <label class="block mb-2 text-sm text-gray-600">Confirm Password *</label>
                   <MazInput v-model="confirmPassword" type="password" placeholder="Re-enter Password" class="w-full" block required />
                 </div>
               </div>
@@ -42,7 +42,7 @@
 
               <!-- Other Fields Below -->
               <div class="mt-6 ">
-                <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200">Allergies (optional)</label>
+                <label class="block mb-2 text-sm text-gray-600">Allergies (optional)</label>
                 <div class="flex items-center gap-2 w-full"> <!-- Reduced gap -->
                   <MazInput v-model="newAllergy" type="text" placeholder="Add Allergy" block/>
                   <MazBtn @click="addAllergy" color="primary" class="px-3 py-[10px]">Add</MazBtn> <!-- Adjusted padding -->
@@ -55,33 +55,32 @@
                 </div>
               </div>
 
-  <!-- Meat Consumption -->
+              <!-- Meat Consumption -->
               <div class="mt-6">
-                <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200">Meat Consumption *</label>
+                <label class="block mb-2 text-sm text-gray-600">Meat Consumption *</label>
                 <MazRadioButtons v-model="meatConsumption" :options="consumptionOptions" name="meatConsumption" variant="radio" size="sm" block />
               </div>
 
               <!-- Fish Consumption -->
               <div class="mt-6">
-                <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200">Fish Consumption *</label>
+                <label class="block mb-2 text-sm text-gray-600">Fish Consumption *</label>
                 <MazRadioButtons v-model="fishConsumption" :options="consumptionOptions" name="fishConsumption" variant="radio" size="sm" block />
               </div>
 
               <!-- Vegetable Consumption -->
               <div class="mt-6">
-                <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200">Vegetable Consumption *</label>
+                <label class="block mb-2 text-sm text-gray-600">Vegetable Consumption *</label>
                 <MazRadioButtons v-model="vegetableConsumption" :options="consumptionOptions" name="vegetableConsumption" variant="radio" size="sm" block />
               </div>
 
-
               <div class="mt-6">
-                <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200">Spiciness *</label>
+                <label class="block mb-2 text-sm text-gray-600">Spiciness *</label>
                 <MazSlider v-model="spiciness" :min="1" :max="5" />
               </div>
 
               <div class="mt-6 flex items-center">
                 <MazCheckbox v-model="agreeTerms" />
-                <label class="ml-2 text-sm text-gray-600 dark:text-gray-200">I agree to the terms and conditions</label>
+                <label class="ml-2 text-sm text-gray-600">I agree to the terms and conditions</label>
               </div>
 
               <div class="mt-6">
@@ -89,7 +88,7 @@
               </div>
 
               <div class="mt-4 text-center">
-                <p class="text-sm text-gray-600 dark:text-gray-200">
+                <p class="text-sm text-gray-600">
                   Already have an account? <a href="/" class="text-blue-500">Log in</a>
                 </p>
               </div>
@@ -100,7 +99,6 @@
     </div>
   </div>
 </template>
-
   
 <script setup>
 import { ref, computed } from "vue"
