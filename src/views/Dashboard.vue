@@ -1,12 +1,28 @@
 <template>
   <div class="container mx-auto p-0 sm:p-6">
     <!-- Title -->
-    <h1 class="font-bold text-2xl sm:text-4xl mt-14 text-center">
-      What are you cooking today?
-    </h1>
+    <div class="flex flex-col items-center justify-between text-center">
+      <h1 class="font-bold text-2xl sm:text-4xl mt-14">What are you cooking today?</h1>
 
-    <!-- Loading -->
-    <div v-if="isLoading" class="text-center mt-10">
+      <!-- Search Input -->
+      <div class="w-full max-w-xl mt-6">
+        <MazInput 
+          v-model="searchQuery" 
+          placeholder="Search for a recipe..." 
+          class="w-full"
+          block
+          rounded-size="full"
+        >
+          <template #prepend-inner>
+            <MagnifyingGlassIcon class="w-5 h-5 text-gray-500 mx-2" />
+          </template>
+        </MazInput>
+      </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div v-if="isLoading" class="text-center mt-14 flex flex-col items-center justify-center space-y-4">
+      <MazSpinner size="60" color="primary" />
       <span class="text-gray-600">Loading recipes...</span>
     </div>
 
@@ -18,7 +34,7 @@
     <!-- Recipe Grid -->
     <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
       <MazCard
-        v-for="(recipe, index) in recipes"
+        v-for="(recipe, index) in filteredRecipes"
         :key="recipe.id"
         class="overflow-hidden !p-0 !shadow-none hover:scale-105 hover:cursor-pointer transition-transform duration-300"
         data-aos="fade-up"
@@ -43,7 +59,7 @@
 </template>
 
 <script setup>
-import { ref, watchEffect, onMounted } from 'vue'
+import { ref, computed, watchEffect, onMounted } from 'vue'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { useGetRecipes } from '@/stores/apiStore'
@@ -52,6 +68,7 @@ import RecipeDialog from '@/components/Dialog.vue'
 const recipes = ref([])
 const selectedRecipe = ref(null)
 const isDialogOpen = ref(false)
+const searchQuery = ref("")
 
 const { data: aiRecipesRaw, isLoading, error } = useGetRecipes()
 
@@ -69,6 +86,15 @@ watchEffect(() => {
       how_to_cook: dish.how_to_cook || [],
     }))
   }
+})
+
+// Filtered recipes based on search input
+const filteredRecipes = computed(() => {
+  if (!searchQuery.value) return recipes.value
+  return recipes.value.filter(recipe =>
+    recipe.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    recipe.description.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
 })
 
 function openDialog(recipe) {

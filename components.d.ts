@@ -21,6 +21,7 @@ declare module 'vue' {
     MazRadioButtons: typeof import('maz-ui/components/MazRadioButtons')['default']
     MazSelect: typeof import('maz-ui/components/MazSelect')['default']
     MazSlider: typeof import('maz-ui/components/MazSlider')['default']
+    MazSpinner: typeof import('maz-ui/components/MazSpinner')['default']
     MazStepper: typeof import('maz-ui/components/MazStepper')['default']
     Navbar: typeof import('./src/components/Navbar.vue')['default']
     RecipeDilaogContent: typeof import('./src/components/RecipeDilaogContent.vue')['default']
