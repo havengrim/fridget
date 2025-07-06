@@ -63,7 +63,7 @@
                     <MazInput v-model="firstName" type="text" placeholder="John" block required />
                   </div>
                   <div class="w-full sm:w-1/2">
-                    <label class="block mb-2 text-sm text-gray-600">User ID *</label>
+                    <label class="block mb-2 text-sm text-gray-600">User Name *</label>
                     <MazInput v-model="userId" type="text" placeholder="john_doe" block required />
                   </div>
                 </div>
