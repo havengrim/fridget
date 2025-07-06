@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Dialog: typeof import('./src/components/Dialog.vue')['default']
     Footer: typeof import('./src/components/Footer.vue')['default']
     MazAvatar: typeof import('maz-ui/components/MazAvatar')['default']
     MazBtn: typeof import('maz-ui/components/MazBtn')['default']
@@ -20,7 +21,9 @@ declare module 'vue' {
     MazRadioButtons: typeof import('maz-ui/components/MazRadioButtons')['default']
     MazSelect: typeof import('maz-ui/components/MazSelect')['default']
     MazSlider: typeof import('maz-ui/components/MazSlider')['default']
+    MazStepper: typeof import('maz-ui/components/MazStepper')['default']
     Navbar: typeof import('./src/components/Navbar.vue')['default']
+    RecipeDilaogContent: typeof import('./src/components/RecipeDilaogContent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
