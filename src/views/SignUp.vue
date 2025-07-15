@@ -7,33 +7,7 @@
     >
       <div class="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent"></div>
 
-      <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 max-w-xl bg-white/30 backdrop-blur-sm p-6 rounded-2xl shadow-lg">
-        <div class="space-y-4">
-          <h2 class="text-2xl font-bold text-gray-900">AI-Powered Recipe Discovery</h2>
-          <p class="text-gray-700 text-base leading-relaxed">
-            Transform your cooking experience with intelligent recipe suggestions based on your available ingredients. 
-            Let our AI chef guide you to delicious meals.
-          </p>
-          <div class="grid grid-cols-2 gap-3 text-xs">
-            <div class="flex items-center space-x-2 text-gray-700">
-              <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
-              <span class="font-medium">Smart Ingredient Matching</span>
-            </div>
-            <div class="flex items-center space-x-2 text-gray-700">
-              <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span class="font-medium">Personalized Recommendations</span>
-            </div>
-            <div class="flex items-center space-x-2 text-gray-700">
-              <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
-              <span class="font-medium">Nutritional Insights</span>
-            </div>
-            <div class="flex items-center space-x-2 text-gray-700">
-              <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
-              <span class="font-medium">Step-by-Step Guidance</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </div>
 
     <!-- Right side - Stepper Form -->

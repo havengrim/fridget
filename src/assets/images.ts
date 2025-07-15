@@ -4,7 +4,7 @@ import avocado from "@/assets/avocado.jpg"
 import chocolate from "@/assets/chocolate.jpg"
 import pasta from "@/assets/pasta.jpg"
 import cooking from "@/assets/cooking.svg"
-import dashboard from "@/assets/dashboard-preview.png"
+import dashboard from "@/assets/dashboard-preview.jpeg"
 const images = {
     logo,
     pasta,

@@ -1,0 +1,7 @@
+Django
+python-dotenv
+openai
+pymysql
+djangorestframework
+django-cors-headers
+transformers
